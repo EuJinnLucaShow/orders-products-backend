@@ -7,11 +7,11 @@ const server = createServer(app);
 
 const io = new Server(server, {
   cors: {
-    origin: "https://spa-application-orders-products.vercel.app",
+    origin: "https://spa-application-orders-products.vercel.app/",
     methods: ["GET", "POST"],
     credentials: true,
   },
-  transports: ['websocket', 'polling'], 
+  transports: ["websocket", "polling"],
 });
 
 let activeSessions = 0;
