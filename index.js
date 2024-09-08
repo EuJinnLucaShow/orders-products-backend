@@ -1,4 +1,6 @@
 const express = require("express");
+const moment = require("moment");
+const fs = require("fs/promises");
 const { createServer } = require("http");
 const { Server } = require("socket.io");
 
@@ -26,6 +28,13 @@ io.on("connection", (socket) => {
     console.log("Client disconnected");
     io.emit("sessionUpdate", activeSessions);
   });
+});
+
+io.use(async (req, res, next) => {
+  const { method, url } = req;
+  const data = moment().format("DD-MM-YYYY hh:mm:ss a");
+  await fs.appendFile("./public/server.log", `\n${method} ${url} ${data}`);
+  next();
 });
 
 server.listen(3000, () => {
