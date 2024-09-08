@@ -2,8 +2,26 @@ const express = require("express");
 const moment = require("moment");
 const fs = require("fs/promises");
 const cors = require("cors");
+const socketIo = require("socket.io");
+const { createServer } = require("node:http");
 
 const app = express();
+const server = createServer(app);
+const io = socketIo(server);
+
+let activeSessions = 0;
+
+io.on("connection", (socket) => {
+  activeSessions++;
+  console.log("New client connected");
+  io.emit("sessionUpdate", activeSessions);
+
+  socket.on("disconnect", () => {
+    activeSessions--;
+    console.log("Client disconnected");
+    io.emit("sessionUpdate", activeSessions);
+  });
+});
 
 app.use(cors());
 
@@ -15,7 +33,7 @@ app.use(async (req, res, next) => {
 });
 
 app.get("/", (req, res) => {
-  res.json([]);
+  res.send("<h1>Hello world</h1>");
 });
 
 app.use((req, res) => {
@@ -24,4 +42,4 @@ app.use((req, res) => {
   });
 });
 
-app.listen(3000, () => console.log("Server running"));
+server.listen(3000, () => console.log("Server running on port 3000"));
