@@ -4,6 +4,7 @@ const fs = require("fs/promises");
 const cors = require("cors");
 const socketIo = require("socket.io");
 const { createServer } = require("node:http");
+const path = require("path");
 
 const app = express();
 const server = createServer(app);
@@ -32,8 +33,10 @@ app.use(async (req, res, next) => {
   next();
 });
 
+app.use(express.static(path.join(__dirname, "build")));
+
 app.get("/", (req, res) => {
-  res.sendFile(__dirname + "/index.html");
+  res.sendFile(path.join(__dirname, "build", "index.html"));
 });
 
 app.use((req, res) => {
