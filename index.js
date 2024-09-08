@@ -30,8 +30,8 @@ io.on("connection", (socket) => {
   });
 });
 
-io.use(async (req, res, next) => {
-  const { method, url } = req;
+io.use(async (socket, next) => {
+  const { method, url } = socket.request;
   const data = moment().format("DD-MM-YYYY hh:mm:ss a");
   await fs.appendFile("./public/server.log", `\n${method} ${url} ${data}`);
   next();
