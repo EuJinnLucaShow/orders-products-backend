@@ -1,5 +1,4 @@
 const express = require("express");
-const cors = require("cors");
 const { createServer } = require("http");
 const { Server } = require("socket.io");
 
@@ -12,6 +11,7 @@ const io = new Server(server, {
     methods: ["GET", "POST"],
     credentials: true,
   },
+  transports: ['websocket', 'polling'], 
 });
 
 let activeSessions = 0;
@@ -26,12 +26,6 @@ io.on("connection", (socket) => {
     console.log("Client disconnected");
     io.emit("sessionUpdate", activeSessions);
   });
-});
-
-app.use(cors());
-
-app.get("/", (req, res) => {
-  res.send("Hello world");
 });
 
 server.listen(3000, () => {
