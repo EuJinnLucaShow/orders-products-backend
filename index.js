@@ -10,7 +10,7 @@ const server = createServer(app);
 
 app.use(
   cors({
-    origin: process.env.URL_FRONT,
+    origin: [process.env.URL_FRONT, process.env.LOCALHOST],
     methods: ["GET", "POST", "DELETE"],
     credentials: true,
   })
