@@ -1,30 +1,74 @@
 const express = require("express");
 const { createServer } = require("http");
 const { Server } = require("socket.io");
+const { MongoClient, ObjectId } = require("mongodb");
+require("dotenv").config();
 
 const app = express();
 const server = createServer(app);
 
 const io = new Server(server, {
   cors: {
-    origin: "https://spa-application-orders-products.vercel.app/",
-    methods: ["GET", "POST"],
+    origin: process.env.URL_FRONT,
+    methods: ["GET", "POST", "DELETE"],
     credentials: true,
   },
 });
 
 let activeSessions = 0;
 
-io.on("connection", (socket) => {
-  activeSessions++;  
-  io.emit("sessionUpdate", activeSessions);
+const url = process.env.URL_DB;
+const client = new MongoClient(url);
 
-  socket.on("disconnect", () => {
-    activeSessions--;    
-    io.emit("sessionUpdate", activeSessions);
-  });
-});
+async function main() {
+  try {
+    await client.connect();
+    const db = client.db("db-orders-products");
+    const collection = db.collection("orders-products");
 
-server.listen(3000, () => {
-  console.log("Server running on port 3000");
-});
+    app.get("/items", async (req, res) => {
+      try {
+        const items = await collection.find({}).toArray();
+        res.json(items);
+      } catch (error) {
+        res.status(500).json({ message: error.message });
+      }
+    });
+
+    app.delete("/items/:id", async (req, res) => {
+      try {
+        const { id } = req.params;
+        console.log(id);
+        const result = await collection.deleteOne({
+          _id: new ObjectId(id),
+        });
+        if (result.deletedCount === 1) {
+          res.status(200).send(`Item with id ${id} was deleted`);
+        } else {
+          res.status(404).send("Item not found");
+        }
+      } catch (error) {
+        console.error("Error deleting data:", error);
+        res.status(500).send("Internal Server Error");
+      }
+    });
+
+    io.on("connection", (socket) => {
+      activeSessions++;
+      io.emit("sessionUpdate", activeSessions);
+
+      socket.on("disconnect", () => {
+        activeSessions--;
+        io.emit("sessionUpdate", activeSessions);
+      });
+    });
+
+    server.listen(3000, () => {
+      console.log("Server running on port 3000");
+    });
+  } catch (e) {
+    console.error(e);
+  }
+}
+
+main().catch(console.error);
