@@ -37,8 +37,7 @@ async function main() {
 
     app.delete("/items/:id", async (req, res) => {
       try {
-        const { id } = req.params;
-        console.log(id);
+        const { id } = req.params;        
         const result = await collection.deleteOne({
           _id: new ObjectId(id),
         });
