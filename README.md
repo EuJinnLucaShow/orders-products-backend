@@ -35,7 +35,46 @@ This project is a Node.js server application built using Express.js, MongoDB, an
 
 ### Installation
 
-1. Clone the repository:
+1. **Clone the repository:**
+  ```
+  git clone https://github.com/yourusername/yourproject.git
+  cd yourproject
+  ```
+2. **Install the dependencies:**
+   ```
+   npm install
+   ```
+3. **Create a** `.env` **file** in the root directory with your MongoDB connection string and frontend URL.  
+
+4. **Start the server:**
 ```
-git clone https://github.com/yourusername/yourproject.git
-cd yourproject
+npm start
+```
+The server will start on port `3000`.
+
+Usage
+-----
+
+*   Access the API:
+    
+    *   `GET /items` to retrieve the list of orders/products.
+        
+    *   `DELETE /items/:id` to delete a specific order/product by its ID.
+        
+*   Monitor active sessions in real-time using WebSocket. The server will emit the current number of active sessions under the `sessionUpdate` event.
+    
+
+License
+-------
+
+This project is licensed under the MIT License.
+
+Contributing
+------------
+
+Feel free to submit issues or pull requests if you'd like to contribute to the project.
+
+Contact
+-------
+
+For questions or suggestions, please contact eujinnlucashow@gmail.com
