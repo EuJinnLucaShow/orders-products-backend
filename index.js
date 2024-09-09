@@ -1,4 +1,5 @@
 const express = require("express");
+const cors = require("cors");
 const { createServer } = require("http");
 const { Server } = require("socket.io");
 const { MongoClient, ObjectId } = require("mongodb");
@@ -6,6 +7,14 @@ require("dotenv").config();
 
 const app = express();
 const server = createServer(app);
+
+app.use(
+  cors({
+    origin: process.env.URL_FRONT,
+    methods: ["GET", "POST", "DELETE"],
+    credentials: true,
+  })
+);
 
 const io = new Server(server, {
   cors: {
@@ -37,7 +46,7 @@ async function main() {
 
     app.delete("/items/:id", async (req, res) => {
       try {
-        const { id } = req.params;        
+        const { id } = req.params;
         const result = await collection.deleteOne({
           _id: new ObjectId(id),
         });
