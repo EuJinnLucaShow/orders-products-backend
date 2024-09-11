@@ -48,7 +48,7 @@ This project is a Node.js server application built using Express.js, MongoDB, an
 
 4. **Start the server:**
 ```
-npm start
+npm run dev
 ```
 The server will start on port `3000`.
 
